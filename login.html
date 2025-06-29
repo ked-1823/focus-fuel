@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smartify - Login & Register</title>
+  <link rel="stylesheet" href="login.css" />
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDoWm21fIjIMM7jSI9ijA2YjvBNKsZacl8",
+      authDomain: "focusfuel-c4eec.firebaseapp.com",
+      projectId: "focusfuel-c4eec",
+      storageBucket: "focusfuel-c4eec.appspot.com",
+      messagingSenderId: "325140276155",
+      appId: "1:325140276155:web:9f542aece9ac6e41685a9e"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    async function storeUserData(user) {
+      const userRef = db.collection("users").doc(user.uid);
+      await userRef.set({
+        email: user.email,
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+  </script>
+</head>
+<body>
+  <div class="auth-box">
+    <h2 id="form-title">Login</h2>
+
+    <div class="error-message" id="error-msg"></div>
+
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+
+    <button id="auth-btn">Login</button>
+    <hr style="margin: 24px 0; opacity: 0.3;">
+    <button id="google-btn" class="google-btn">Continue with Google</button>
+
+    <p class="toggle-mode" id="toggle-link">Don't have an account? Register</p>
+  </div>
+
+  <script>
+    const authBtn = document.getElementById("auth-btn");
+    const toggleLink = document.getElementById("toggle-link");
+    const formTitle = document.getElementById("form-title");
+    const errorMsg = document.getElementById("error-msg");
+
+    let isLogin = true;
+
+    toggleLink.addEventListener("click", () => {
+      isLogin = !isLogin;
+      formTitle.textContent = isLogin ? "Login" : "Register";
+      authBtn.textContent = isLogin ? "Login" : "Register";
+      toggleLink.textContent = isLogin
+        ? "Don't have an account? Register"
+        : "Already have an account? Login";
+      errorMsg.textContent = "";
+    });
+
+    authBtn.addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!email || !password) {
+        errorMsg.textContent = "Please enter both email and password.";
+        return;
+      }
+
+      try {
+        let userCredential;
+        if (isLogin) {
+          userCredential = await auth.signInWithEmailAndPassword(email, password);
+        } else {
+          userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        }
+
+        await storeUserData(userCredential.user);
+        window.location.href = "index.html";
+      } catch (error) {
+        errorMsg.textContent = error.message;
+      }
+    });
+
+    document.getElementById("google-btn").addEventListener("click", async () => {
+      try {
+        const result = await auth.signInWithPopup(provider);
+        await storeUserData(result.user);
+        window.location.href = "index.html";
+      } catch (error) {
+        errorMsg.textContent = error.message;
+      }
+    });
+    
+  </script>
+</body>
+</html>

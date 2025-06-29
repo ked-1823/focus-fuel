@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Tracker</title>
+    <link rel="stylesheet" href="challenge.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    
+</head>
+<body>
+    <div class="challenge-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-fire"></i>
+                <h1>Challenge Tracker</h1>
+            </div>
+            <p class="subtitle">Build lasting habits, one day at a time</p>
+        </div>
+
+        <!-- Setup Section -->
+        <div id="setup-section" class="section">
+            <div class="form-group">
+                <label for="challenge-name">
+                    <i class="fas fa-target"></i>
+                    Challenge Name
+                </label>
+                <input type="text" id="challenge-name" placeholder="e.g., Daily Exercise, Read 30 minutes...">
+            </div>
+            
+            <div class="form-group">
+                <label for="challenge-duration">
+                    <i class="fas fa-calendar-alt"></i>
+                    Duration
+                </label>
+                <select id="challenge-duration">
+                    <option value="7">7 Days Challenge</option>
+                    <option value="14">14 Days Challenge</option>
+                    <option value="21" selected>21 Days Challenge</option>
+                    <option value="30">30 Days Challenge</option>
+                    <option value="90">90 Days Challenge</option>
+                </select>
+            </div>
+            
+            <button id="start-btn" class="primary-btn" disabled>
+                <i class="fas fa-play"></i>
+                Start Challenge
+            </button>
+        </div>
+
+        <!-- Progress Section (Hidden initially) -->
+        <div id="progress-section" class="section" style="display: none;">
+            <div class="progress-header">
+                <h2 id="challenge-title">My Challenge</h2>
+                
+                <div class="progress-stats">
+                    <div class="stat">
+                        <div class="stat-number" id="current-streak">0</div>
+                        <div class="stat-label">Current Streak</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="total-completed">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="completion-rate">0%</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="progress-grid" class="checkboxes-grid"></div>
+
+            <div class="action-buttons">
+                <button id="undo-btn" class="secondary-btn" style="display: none;">
+                    <i class="fas fa-undo"></i>
+                    Undo Last
+                </button>
+                <button id="reset-btn" class="danger-btn">
+                    <i class="fas fa-refresh"></i>
+                    Reset Challenge
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <a href="#" class="back-link" id="back-to-setup" style="display: none;">
+                <i class="fas fa-arrow-left"></i>
+                Start New Challenge
+            </a>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script type="module" src="challenge.js"></script>
+</body>
+</html>

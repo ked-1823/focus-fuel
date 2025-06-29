@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro Focus</title>
+  <link rel="stylesheet" href="pomo.css" />
+</head>
+<body>
+  <!-- Background gradient with animated particles -->
+  <div class="background-particles"></div>
+  
+  <div class="dashboard">
+    <!-- Main Pomodoro Card -->
+    <section class="card pomodoro-card">
+      <!-- Header Section -->
+      <header class="header">
+        <div class="header-top">
+          <button id="back-btn" class="back-btn" style="display: none;">← Back</button>
+
+          <div class="logo-container">
+            <img src="min.png" alt="pomodoro icon" class="logo" />
+            <h1>Pomodoro Focus</h1>
+          </div>
+        </div>
+
+        <p class="subtitle">Stay focused, stay productive</p>
+      </header>
+
+
+      <!-- Task Management Section -->
+      <div class="task-section">
+        <h3 class="section-title">📝 Current Task</h3>
+        <div class="task-input-container">
+          <input 
+            type="text" 
+            id="ta" 
+            placeholder="What are you working on today?" 
+            class="task-input"
+          />
+          <button id="add-task-btn" class="add-task-btn">
+            <span>+</span>
+          </button>
+        </div>
+        <ul id="task-list" class="task-list"></ul>
+      </div>
+
+      <!-- Timer Section -->
+      <div class="timer-section">
+        <div class="timer-card">
+          <h2 id="session-title" class="session-title">Work Session</h2>
+          <div class="timer-display-container">
+            <div id="time-display" class="time-display">25:00</div>
+            <div class="progress-ring">
+              <svg class="progress-ring-svg" width="200" height="200">
+                <circle
+                  class="progress-ring-circle-bg"
+                  stroke="#e2e8f0"
+                  stroke-width="8"
+                  fill="transparent"
+                  r="90"
+                  cx="100"
+                  cy="100"
+                />
+                <circle
+                  class="progress-ring-circle"
+                  stroke="url(#gradient)"
+                  stroke-width="8"
+                  fill="transparent"
+                  r="90"
+                  cx="100"
+                  cy="100"
+                />
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+          </div>
+          
+          <!-- Control Buttons -->
+          <div class="controls">
+            <button id="start-btn" class="control-btn start-btn" disabled>
+              <span class="btn-icon">▶</span>
+              <span>Start</span>
+            </button>
+            <button id="pause-btn" class="control-btn pause-btn">
+              <span class="btn-icon">⏸</span>
+              <span>Pause</span>
+            </button>
+            <button id="reset-btn" class="control-btn reset-btn">
+              <span class="btn-icon">↻</span>
+              <span>Reset</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Timer Section -->
+      <div class="custom-time-section">
+        <h3 class="section-title">⏱ Custom Timer</h3>
+        <div class="custom-time-controls">
+          <div class="input-group">
+            <label for="custom-minutes">Minutes</label>
+            <input type="number" id="custom-minutes" min="1" max="120" value="25" />
+          </div>
+          <button id="set-time-btn" class="set-time-btn">Set Timer</button>
+        </div>
+      </div>
+
+      <!-- Statistics Section -->
+      <div class="history">
+        <h3 class="section-title">📈 Today's Progress</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="session-count">0</div>
+            <div class="stat-label">Sessions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="total-focus-time">0</div>
+            <div class="stat-label">Minutes</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

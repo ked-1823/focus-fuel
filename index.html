@@ -1,16 +1,251 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>replit</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Productivity Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-
 <body>
-  Hello world
-  <script src="script.js"></script>
-</body>
+  <!-- Animated Background -->
+  <div class="background-overlay"></div>
+  <div class="floating-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+  </div>
 
+  <div class="dashboard-container">
+    <!-- Header Section -->
+    <header class="dashboard-header">
+      <div class="header-content">
+        <div class="logo-section">
+          <div class="logo-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <div class="header-text">
+            <h1>Productivity Hub</h1>
+            <p class="tagline">Elevate your focus, achieve your goals</p>
+          </div>
+        </div>
+        <div class="user-info">
+          Logged in as: <span id="user-email"></span>
+          <button onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+      </div>
+
+    </header>
+
+    <!-- Main Dashboard Grid -->
+  <!-- Inside your <body>, replace the entire dashboard-grid section with this: -->
+
+  <div class="dashboard-grid">
+    <!-- Pomodoro Card -->
+    <a href="pomo.html" class="dashboard-card-link">
+      <div class="dashboard-card pomodoro-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-clock"></i></div>
+          <div class="card-badge">Popular</div>
+        </div>
+        <div class="card-content">
+          <h2>Pomodoro Focus</h2>
+          <p>Boost productivity with 25-minute focused work sessions and strategic breaks.</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- Focus Fuel Card -->
+    <a href="focus.html" class="dashboard-card-link">
+      <div class="dashboard-card focus-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-brain"></i></div>
+          <div class="card-status active"></div>
+        </div>
+        <div class="card-content">
+          <h2>Focus Fuel</h2>
+          <p>Daily mindfulness practices and productivity mantras to enhance concentration.</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- Habit Tracker Card -->
+    <a href="habit.html" class="dashboard-card-link">
+      <div class="dashboard-card habit-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+        </div>
+        <div class="card-content">
+          <h2>Habit Tracker</h2>
+          <p>Build consistency and track your daily habits with visual progress indicators.</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- Breathing Exercise Card -->
+    <a href="breath.html" class="dashboard-card-link">
+      <div class="dashboard-card breathing-card">
+        <div class="card-header">
+          <div class="card-icon breathing-icon"><i class="fas fa-leaf"></i></div>
+        </div>
+        <div class="card-content">
+          <h2>Breathing Exercise</h2>
+          <p>Reduce stress and improve focus with guided breathing techniques.</p>
+        </div>
+        <div class="card-footer">
+          <button class="breathing-btn"><i class="fas fa-play"></i> Start Session</button>
+        </div>
+      </div>
+    </a>
+
+    <!-- Challenge Card -->
+    <a href="challenge.html" class="dashboard-card-link">
+      <div class="dashboard-card challenge-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-trophy"></i></div>
+          <div class="difficulty-badge">Medium</div>
+        </div>
+        <div class="card-content">
+          <h2>Daily Challenge</h2>
+          <p>Push your limits with personalized challenges and track your progress.</p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <p>&copy; 2025 Productivity Hub. Designed for peak performance.</p>
+    </footer>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <script>
+    // Add some interactive animations
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.dashboard-card');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('fade-in');
+      });
+
+      const breathingIcon = document.querySelector('.breathing-icon');
+      if (breathingIcon) {
+        setInterval(() => {
+          breathingIcon.style.transform = 'scale(1.1)';
+          setTimeout(() => {
+            breathingIcon.style.transform = 'scale(1)';
+          }, 1000);
+        }, 2000);
+      }
+
+      const shapes = document.querySelectorAll('.shape');
+      shapes.forEach(shape => {
+        const duration = Math.random() * 20 + 10;
+        const delay = Math.random() * 5;
+        shape.style.animationDuration = `${duration}s`;
+        shape.style.animationDelay = `${delay}s`;
+      });
+
+      //updateProgressBar();
+    });
+
+    function updateProgressBar() {
+      const progressBar = document.querySelector('.progress-bar');
+      const progressText = document.querySelector('.progress-text');
+      
+      if (progressBar && progressText) {
+        const completed = 3;
+        const total = 5;
+        const percentage = (completed / total) * 100;
+        
+        progressBar.style.width = `${percentage}%`;
+        progressText.textContent = `${completed}/${total} sessions today`;
+      }
+    }
+
+    function completeSession() {
+      const progressBar = document.querySelector('.progress-bar');
+      const progressText = document.querySelector('.progress-text');
+      
+      if (progressBar && progressText) {
+        const currentWidth = parseInt(progressBar.style.width) || 0;
+        const newWidth = Math.min(currentWidth + 20, 100);
+        const completed = Math.floor(newWidth / 20);
+        
+        progressBar.style.width = `${newWidth}%`;
+        progressText.textContent = `${completed}/5 sessions today`;
+      }
+    }
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDoWm21fIjIMM7jSI9ijA2YjvBNKsZacl8",
+      authDomain: "focusfuel-c4eec.firebaseapp.com",
+      projectId: "focusfuel-c4eec",
+      storageBucket: "focusfuel-c4eec.appspot.com",
+      messagingSenderId: "325140276155",
+      appId: "1:325140276155:web:9f542aece9ac6e41685a9e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(async user => {
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
+        document.getElementById("user-email").textContent = user.email; // 👈 add this
+        console.log("Logged in as:", user.email);
+
+        const userRef = db.collection("users").doc(user.uid);
+        const userDoc = await userRef.get();
+
+        if (userDoc.exists) {
+          const data = userDoc.data();
+          const pomoData = data.pomodoro || {};
+          const sessionsToday = pomoData.todayCount || 0;
+          const streak = pomoData.streak || 0;
+          const maxDailySessions = 5;
+
+          // 🔁 Update streak in header
+          const streakElement = document.querySelector(".header-stats .stat-item:nth-child(3) .stat-number");
+          if (streakElement) {
+            streakElement.textContent = streak;
+          }
+
+          // 🔁 Update Pomodoro card progress
+          const progressBar = document.querySelector(".progress-bar");
+          const progressText = document.querySelector(".progress-text");
+          const percent = Math.min((sessionsToday / maxDailySessions) * 100, 100);
+
+          if (progressBar && progressText) {
+            progressBar.style.width = `${percent}%`;
+            progressText.textContent = `${sessionsToday}/${maxDailySessions} sessions today`;
+          }
+
+          // 🔁 Optional: Log for debugging
+          console.log("Pomodoro Stats:", { sessionsToday, streak });
+        }
+      }
+    });
+
+
+
+    function logout() {
+      auth.signOut().then(() => {
+        window.location.href = "login.html";
+      });
+    }
+  </script>
+
+</body>
 </html>

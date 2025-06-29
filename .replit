@@ -1,4 +1,4 @@
-entrypoint = "index.html"
+entrypoint = "login.html"
 modules = ["web"]
 
 [nix]

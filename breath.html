@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Breathe - Mindful Breathing Exercise</title>
+  <link rel="stylesheet" href="breath.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🧘‍♂️ Breathe</h1>
+    <p class="subtitle">Find your calm with guided breathing</p>
+    <p id="instruction">Click start to begin your mindful journey</p>
+    
+    <div class="circle-container">
+      <div class="circle">
+        <div class="inner-circle"></div>
+      </div>
+    </div>
+    
+    <div class="controls">
+      <button id="start-btn" class="primary-btn">Start Breathing</button>
+      
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-label">Round</span>
+          <span id="round-counter" class="stat-value">0/3</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Phase</span>
+          <span id="phase-indicator" class="stat-value">Ready</span>
+        </div>
+      </div>
+    </div>
+    
+    <a href="index.html" id="back-btn" class="back-link">← Back to Dashboard</a>
+  </div>
+
+  <script>
+    const instruction = document.getElementById('instruction');
+    const circle = document.querySelector('.circle');
+    const startBtn = document.getElementById('start-btn');
+    const roundCounter = document.getElementById('round-counter');
+    const phaseIndicator = document.getElementById('phase-indicator');
+    
+    const sequence = [
+      { text: "Breathe in slowly... 🫁", phase: "Inhale", duration: 4000 },
+      { text: "Hold your breath... ⏸️", phase: "Hold", duration: 2000 },
+      { text: "Breathe out gently... 💨", phase: "Exhale", duration: 4000 },
+      { text: "Pause and relax... 🤍", phase: "Rest", duration: 2000 }
+    ];
+    
+    let isRunning = false;
+    let currentTimeout;
+    
+    startBtn.addEventListener('click', () => {
+      if (isRunning) {
+        // Stop the exercise
+        isRunning = false;
+        clearTimeout(currentTimeout);
+        instruction.textContent = "Exercise stopped. Click start to begin again.";
+        startBtn.textContent = "Start Breathing";
+        startBtn.classList.remove('stop-btn');
+        circle.classList.remove("expand", "contract", "hold");
+        phaseIndicator.textContent = "Stopped";
+        roundCounter.textContent = "0/3";
+        return;
+      }
+      
+      isRunning = true;
+      startBtn.classList.add('stop-btn');
+      startBtn.textContent = "Stop";
+      let round = 0;
+      let step = 0;
+      
+      function runStep() {
+        if (!isRunning) return;
+        
+        if (round >= 3) {
+          instruction.textContent = "✨ Complete! You're centered and ready 💫";
+          phaseIndicator.textContent = "Finished";
+          startBtn.textContent = "Start Again";
+          startBtn.classList.remove('stop-btn');
+          circle.classList.remove("expand", "contract", "hold");
+          isRunning = false;
+          return;
+        }
+        
+        const current = sequence[step];
+        instruction.textContent = current.text;
+        phaseIndicator.textContent = current.phase;
+        roundCounter.textContent = `${round + 1}/3`;
+        
+        // Circle animations
+        circle.classList.remove("expand", "contract", "hold");
+        
+        if (current.phase === "Inhale") {
+          circle.classList.add("expand");
+        } else if (current.phase === "Exhale") {
+          circle.classList.add("contract");
+        } else {
+          circle.classList.add("hold");
+        }
+        
+        currentTimeout = setTimeout(() => {
+          if (!isRunning) return;
+          
+          step++;
+          if (step >= sequence.length) {
+            step = 0;
+            round++;
+          }
+          runStep();
+        }, current.duration);
+      }
+      
+      runStep();
+    });
+  </script>
+</body>
+</html>
