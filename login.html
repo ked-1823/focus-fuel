@@ -11,7 +11,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
   <script>
-    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyDoWm21fIjIMM7jSI9ijA2YjvBNKsZacl8",
       authDomain: "focusfuel-c4eec.firebaseapp.com",
@@ -21,7 +20,6 @@
       appId: "1:325140276155:web:9f542aece9ac6e41685a9e"
     };
     firebase.initializeApp(firebaseConfig);
-
     const auth = firebase.auth();
     const db = firebase.firestore();
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -33,22 +31,39 @@
         lastLogin: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
     }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const loader = document.createElement('div');
+      loader.id = 'loader';
+      loader.innerHTML = '<p>Loading...</p>';
+      document.body.appendChild(loader);
+
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          window.location.href = "index.html";
+        } else {
+          document.getElementById('loader').style.display = 'none';
+        }
+      });
+    });
   </script>
 </head>
 <body>
   <div class="auth-box">
     <h2 id="form-title">Login</h2>
 
-    <div class="error-message" id="error-msg"></div>
+    <div class="error-message" id="error-msg" style="color: red;"></div>
 
     <input type="email" id="email" placeholder="Email" required />
     <input type="password" id="password" placeholder="Password" required />
+
+    <p id="forgot-password" class="link-text" style="cursor: pointer;">Forgot Password?</p>
 
     <button id="auth-btn">Login</button>
     <hr style="margin: 24px 0; opacity: 0.3;">
     <button id="google-btn" class="google-btn">Continue with Google</button>
 
-    <p class="toggle-mode" id="toggle-link">Don't have an account? Register</p>
+    <p class="toggle-mode" id="toggle-link" style="cursor: pointer;">Don't have an account? Register</p>
   </div>
 
   <script>
@@ -67,6 +82,7 @@
         ? "Don't have an account? Register"
         : "Already have an account? Login";
       errorMsg.textContent = "";
+      errorMsg.style.color = "red";
     });
 
     authBtn.addEventListener("click", async () => {
@@ -75,6 +91,7 @@
 
       if (!email || !password) {
         errorMsg.textContent = "Please enter both email and password.";
+        errorMsg.style.color = "red";
         return;
       }
 
@@ -87,9 +104,11 @@
         }
 
         await storeUserData(userCredential.user);
-        window.location.href = "index.html";
+        document.getElementById("password").value = "";
       } catch (error) {
         errorMsg.textContent = error.message;
+        errorMsg.style.color = "red";
+        document.getElementById("password").value = "";
       }
     });
 
@@ -97,12 +116,29 @@
       try {
         const result = await auth.signInWithPopup(provider);
         await storeUserData(result.user);
-        window.location.href = "index.html";
       } catch (error) {
         errorMsg.textContent = error.message;
+        errorMsg.style.color = "red";
       }
     });
-    
+
+    document.getElementById("forgot-password").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      if (!email) {
+        errorMsg.textContent = "Please enter your email to reset password.";
+        errorMsg.style.color = "red";
+        return;
+      }
+
+      try {
+        await auth.sendPasswordResetEmail(email);
+        errorMsg.textContent = "✅ Password reset email sent!";
+        errorMsg.style.color = "green";
+      } catch (error) {
+        errorMsg.textContent = error.message;
+        errorMsg.style.color = "red";
+      }
+    });
   </script>
 </body>
 </html>

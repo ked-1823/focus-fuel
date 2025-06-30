@@ -2,7 +2,7 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #060553, #764ba2);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -43,22 +43,27 @@ input {
 input::placeholder {
   color: #e5e7eb;
 }
-
 button {
-  width: 100%;
-  padding: 12px;
-  background-color: #38bdf8;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.3s ease;
+width: 100%;
+padding: 18px 24px;
+background: linear-gradient(#BAB6DC,#934AED);
+color: white;
+border: none;
+border-radius: 16px;
+font-weight: 700;
+cursor: pointer;
+font-size: 1.1rem;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+position: relative;
+overflow: hidden;
 }
-
 button:hover {
-  background-color: #0ea5e9;
+transform: translateY(-3px);
+box-shadow: 0 15px 35px rgba(102, 126, 234, 0.6);
+background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #1e40af 100%);
 }
 
 .toggle-mode {
@@ -94,4 +99,25 @@ button:hover {
 
 .google-btn:hover {
   background: #f1f5f9;
+}
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  color: #333;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+#forgot-password {
+  color: white; /* Light blue */
+  margin-top: 16px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  opacity: 0.9;
 }
