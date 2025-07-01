@@ -255,3 +255,15 @@ input[type="text"]::placeholder {
         min-width: 120px;
     }
 }
+#new-challenge{
+    border: 3px solid white;
+    border-radius: 10px;
+    padding: 10px;
+    color: #55cddd;
+    text-decoration: none;
+}
+#new-challenge:hover{
+    background-color: #55cddd;
+    color: white;
+    transition: 0.5s;
+}

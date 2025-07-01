@@ -1,4 +1,10 @@
 // Firebase configuration
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
+
+
 const firebaseConfig = {
   apiKey: "AIzaSyDoWm21fIjIMM7jSI9ijA2YjvBNKsZacl8",
   authDomain: "focusfuel-c4eec.firebaseapp.com",
@@ -8,10 +14,8 @@ const firebaseConfig = {
   appId: "1:325140276155:web:9f542aece9ac6e41685a9e"
 };
 
-// Firebase imports
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
+
+
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -62,7 +66,7 @@ class ChallengeTracker {
     this.progressGrid = document.getElementById('progress-grid');
     this.undoBtn = document.getElementById('undo-btn');
     this.resetBtn = document.getElementById('reset-btn');
-    this.backToSetupBtn = document.getElementById('back-to-setup');
+    this.backToSetupBtn = document.getElementById('new-challenge');
     this.toastContainer = document.getElementById('toast-container');
 
     this.currentStreakEl = document.getElementById('current-streak');
@@ -90,12 +94,33 @@ class ChallengeTracker {
 
   async loadExistingChallenge() {
     const data = await loadChallengeFromFirestore(this.userId);
+    console.log("Fetched challenge data:", data);
+
     if (data) {
-      this.currentChallenge = data;
-      this.showProgressSection();
-      this.showToast('Challenge loaded from Firestore!', 'success');
-    }
+      const startDate = new Date(data.startDate);
+      const today = new Date();
+      const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+
+      const missedDayExists = data.progress
+        .slice(0, daysPassed)
+        .some((completed) => !completed);
+
+      if (missedDayExists) {
+        // Strict delete from Firestore if user missed any previous day
+        await deleteDoc(doc(db, "challenges", this.userId));
+        this.currentChallenge = null;
+        this.showToast('You missed a day. Challenge has been deleted. Start again!', 'info');
+        this.showSetupSection();
+      }else {
+          // ✅ This part is missing in your code!
+        this.currentChallenge = data;
+        this.showProgressSection();  // ← Show the challenge UI
+        }
+      }
   }
+
+
+
 
   saveChallenge() {
     if (this.currentChallenge) {
@@ -124,6 +149,10 @@ class ChallengeTracker {
   }
 
   showSetupSection() {
+    if (!this.preventAutoReset) {
+      this.currentChallenge = null;
+    }
+
     this.setupSection.style.display = 'block';
     this.progressSection.style.display = 'none';
     this.backToSetupBtn.style.display = 'none';
@@ -131,6 +160,7 @@ class ChallengeTracker {
     this.durationSelect.value = '21';
     this.startBtn.disabled = true;
   }
+
 
   showProgressSection() {
     this.setupSection.style.display = 'none';
@@ -205,10 +235,12 @@ class ChallengeTracker {
 
   resetChallenge() {
     if (!confirm('Are you sure you want to reset your challenge?')) return;
+    this.preventAutoReset = false;
     this.currentChallenge = null;
     this.showSetupSection();
     this.showToast('Challenge reset successfully', 'success');
   }
+
 
   showToast(message, type = 'info') {
     const toast = document.createElement('div');
