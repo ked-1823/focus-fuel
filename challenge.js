@@ -92,32 +92,37 @@ class ChallengeTracker {
     this.backToSetupBtn.addEventListener('click', () => this.showSetupSection());
   }
 
-  async loadExistingChallenge() {
-    const data = await loadChallengeFromFirestore(this.userId);
-    console.log("Fetched challenge data:", data);
+async loadExistingChallenge() {
+  const data = await loadChallengeFromFirestore(this.userId);
+  console.log("Fetched challenge data:", data);
 
-    if (data) {
-      const startDate = new Date(data.startDate);
-      const today = new Date();
-      const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+  if (data) {
+    const startDate = new Date(data.startDate);
+    const today = new Date();
 
-      const missedDayExists = data.progress
-        .slice(0, daysPassed)
-        .some((completed) => !completed);
+    // Normalize both to midnight
+    startDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
 
-      if (missedDayExists) {
-        // Strict delete from Firestore if user missed any previous day
-        await deleteDoc(doc(db, "challenges", this.userId));
-        this.currentChallenge = null;
-        this.showToast('You missed a day. Challenge has been deleted. Start again!', 'info');
-        this.showSetupSection();
-      }else {
-          // ✅ This part is missing in your code!
-        this.currentChallenge = data;
-        this.showProgressSection();  // ← Show the challenge UI
-        }
-      }
+    const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+
+    const missedDayExists = data.progress
+      .slice(0, daysPassed)
+      .some((completed) => !completed);
+
+    if (missedDayExists) {
+      // Strict delete from Firestore if user missed any previous day
+      await deleteDoc(doc(db, "challenges", this.userId));
+      this.currentChallenge = null;
+      this.showToast('You missed a day. Challenge has been deleted. Start again!', 'info');
+      this.showSetupSection();
+    } else {
+      this.currentChallenge = data;
+      this.showProgressSection();  // ← Show the challenge UI
+    }
   }
+}
+
 
 
 
@@ -174,8 +179,14 @@ class ChallengeTracker {
 
   buildProgressGrid() {
     this.progressGrid.innerHTML = '';
+
     const startDate = new Date(this.currentChallenge.startDate);
     const today = new Date();
+
+    // Normalize both to midnight
+    startDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
     const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
 
     this.currentChallenge.progress.forEach((isCompleted, index) => {
@@ -183,12 +194,22 @@ class ChallengeTracker {
       checkbox.type = 'checkbox';
       checkbox.className = 'challenge-checkbox';
       checkbox.checked = isCompleted;
+
+      // Only allow editing for today or earlier
       checkbox.disabled = index > daysPassed;
+
+      // Optional: highlight today's checkbox
+      if (index === daysPassed) {
+        checkbox.classList.add('active-today');
+      }
+
       checkbox.addEventListener('change', () => this.toggleDay(index, checkbox.checked));
       this.progressGrid.appendChild(checkbox);
     });
+
     this.undoBtn.style.display = this.currentChallenge.lastCheckedIndex >= 0 ? 'inline-flex' : 'none';
   }
+
 
   toggleDay(dayIndex, isCompleted) {
     this.currentChallenge.progress[dayIndex] = isCompleted;
