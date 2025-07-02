@@ -10,6 +10,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDoWm21fIjIMM7jSI9ijA2YjvBNKsZacl8",
@@ -19,6 +20,7 @@
       messagingSenderId: "325140276155",
       appId: "1:325140276155:web:9f542aece9ac6e41685a9e"
     };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -38,8 +40,30 @@
       loader.innerHTML = '<p>Loading...</p>';
       document.body.appendChild(loader);
 
-      auth.onAuthStateChanged((user) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const verifiedParam = urlParams.get("verified");
+
+      auth.onAuthStateChanged(async (user) => {
+        const isGuest = localStorage.getItem("isGuest") === "true";
+
         if (user) {
+          await user.reload(); // Refresh to get latest emailVerified value
+          if (user.emailVerified) {
+            if (verifiedParam === "1") {
+              const msgBox = document.getElementById("error-msg");
+              msgBox.textContent = "✅ Email verified successfully! Logging you in...";
+              msgBox.style.color = "green";
+              await storeUserData(user);
+              setTimeout(() => {
+                window.location.href = "index.html";
+              }, 2000);
+            } else {
+              window.location.href = "index.html";
+            }
+          } else {
+            await auth.signOut(); // prevent access if not verified
+          }
+        } else if (isGuest) {
           window.location.href = "index.html";
         } else {
           document.getElementById('loader').style.display = 'none';
@@ -51,17 +75,16 @@
 <body>
   <div class="auth-box">
     <h2 id="form-title">Login</h2>
-
     <div class="error-message" id="error-msg" style="color: red;"></div>
 
     <input type="email" id="email" placeholder="Email" required />
     <input type="password" id="password" placeholder="Password" required />
-
     <p id="forgot-password" class="link-text" style="cursor: pointer;">Forgot Password?</p>
 
     <button id="auth-btn">Login</button>
     <hr style="margin: 24px 0; opacity: 0.3;">
     <button id="google-btn" class="google-btn">Continue with Google</button>
+    <button id="guest-btn" class="guest-btn">Continue as Guest</button>
 
     <p class="toggle-mode" id="toggle-link" style="cursor: pointer;">Don't have an account? Register</p>
   </div>
@@ -73,6 +96,11 @@
     const errorMsg = document.getElementById("error-msg");
 
     let isLogin = true;
+
+    const blockedDomains = [
+      "tempmail.com", "10minutemail.com", "mailinator.com",
+      "yopmail.com", "guerrillamail.com"
+    ];
 
     toggleLink.addEventListener("click", () => {
       isLogin = !isLogin;
@@ -91,20 +119,57 @@
 
       if (!email || !password) {
         errorMsg.textContent = "Please enter both email and password.";
-        errorMsg.style.color = "red";
+        return;
+      }
+
+      const domain = email.split('@')[1];
+      if (blockedDomains.includes(domain)) {
+        errorMsg.textContent = "Temporary or fake email addresses are not allowed.";
         return;
       }
 
       try {
         let userCredential;
+
         if (isLogin) {
           userCredential = await auth.signInWithEmailAndPassword(email, password);
+          const user = userCredential.user;
+
+          await user.reload();
+
+          if (!user.emailVerified) {
+            await auth.signOut();
+            errorMsg.innerHTML = `
+              ⚠ Please verify your email before logging in.<br>
+              <span style="text-decoration:underline; cursor:pointer; color:blue;" id="resend-link">Resend Verification Email</span>
+            `;
+            errorMsg.style.color = "orange";
+
+            document.getElementById("resend-link").addEventListener("click", async () => {
+              await user.sendEmailVerification();
+              errorMsg.innerHTML = "✅ Verification email resent! Check your inbox.";
+              errorMsg.style.color = "green";
+            });
+            return;
+          }
+
+          await storeUserData(user);
+          window.location.href = "index.html";
+
         } else {
           userCredential = await auth.createUserWithEmailAndPassword(email, password);
+          await userCredential.user.sendEmailVerification();
+          await auth.signOut();
+
+          errorMsg.innerHTML = `
+            ✅ Verification email sent.<br>Please verify and then 
+            <a href="login.html?verified=1" style="color: blue;">click here to login</a>.
+          `;
+          errorMsg.style.color = "green";
         }
 
-        await storeUserData(userCredential.user);
         document.getElementById("password").value = "";
+
       } catch (error) {
         errorMsg.textContent = error.message;
         errorMsg.style.color = "red";
@@ -116,17 +181,22 @@
       try {
         const result = await auth.signInWithPopup(provider);
         await storeUserData(result.user);
+        window.location.href = "index.html";
       } catch (error) {
         errorMsg.textContent = error.message;
         errorMsg.style.color = "red";
       }
     });
 
+    document.getElementById("guest-btn").addEventListener("click", () => {
+      localStorage.setItem("isGuest", "true");
+      window.location.href = "index.html";
+    });
+
     document.getElementById("forgot-password").addEventListener("click", async () => {
       const email = document.getElementById("email").value.trim();
       if (!email) {
         errorMsg.textContent = "Please enter your email to reset password.";
-        errorMsg.style.color = "red";
         return;
       }
 

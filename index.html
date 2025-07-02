@@ -36,85 +36,81 @@
           <button onclick="logout()" class="logout-btn">Logout</button>
         </div>
       </div>
-
     </header>
 
     <!-- Main Dashboard Grid -->
-  <!-- Inside your <body>, replace the entire dashboard-grid section with this: -->
+    <div class="dashboard-grid">
+      <!-- Pomodoro Card -->
+      <a href="pomo.html" class="dashboard-card-link">
+        <div class="dashboard-card pomodoro-card">
+          <div class="card-header">
+            <div class="card-icon"><i class="fas fa-clock"></i></div>
+            <div class="card-badge">Popular</div>
+          </div>
+          <div class="card-content">
+            <h2>Pomodoro Focus</h2>
+            <p>Boost productivity with 25-minute focused work sessions and strategic breaks.</p>
+          </div>
+        </div>
+      </a>
 
-  <div class="dashboard-grid">
-    <!-- Pomodoro Card -->
-    <a href="pomo.html" class="dashboard-card-link">
-      <div class="dashboard-card pomodoro-card">
-        <div class="card-header">
-          <div class="card-icon"><i class="fas fa-clock"></i></div>
-          <div class="card-badge">Popular</div>
+      <!-- Focus Fuel Card -->
+      <a href="focus.html" class="dashboard-card-link">
+        <div class="dashboard-card focus-card">
+          <div class="card-header">
+            <div class="card-icon"><i class="fas fa-brain"></i></div>
+            <div class="card-status active"></div>
+          </div>
+          <div class="card-content">
+            <h2>Focus Fuel</h2>
+            <p>Daily mindfulness practices and productivity mantras to enhance concentration.</p>
+          </div>
         </div>
-        <div class="card-content">
-          <h2>Pomodoro Focus</h2>
-          <p>Boost productivity with 25-minute focused work sessions and strategic breaks.</p>
-        </div>
-      </div>
-    </a>
+      </a>
 
-    <!-- Focus Fuel Card -->
-    <a href="focus.html" class="dashboard-card-link">
-      <div class="dashboard-card focus-card">
-        <div class="card-header">
-          <div class="card-icon"><i class="fas fa-brain"></i></div>
-          <div class="card-status active"></div>
+      <!-- Habit Tracker Card -->
+      <a href="habit.html" class="dashboard-card-link">
+        <div class="dashboard-card habit-card">
+          <div class="card-header">
+            <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+          </div>
+          <div class="card-content">
+            <h2>Habit Tracker</h2>
+            <p>Build consistency and track your daily habits with visual progress indicators.</p>
+          </div>
         </div>
-        <div class="card-content">
-          <h2>Focus Fuel</h2>
-          <p>Daily mindfulness practices and productivity mantras to enhance concentration.</p>
-        </div>
-      </div>
-    </a>
+      </a>
 
-    <!-- Habit Tracker Card -->
-    <a href="habit.html" class="dashboard-card-link">
-      <div class="dashboard-card habit-card">
-        <div class="card-header">
-          <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+      <!-- Breathing Exercise Card -->
+      <a href="breath.html" class="dashboard-card-link">
+        <div class="dashboard-card breathing-card">
+          <div class="card-header">
+            <div class="card-icon breathing-icon"><i class="fas fa-leaf"></i></div>
+          </div>
+          <div class="card-content">
+            <h2>Breathing Exercise</h2>
+            <p>Reduce stress and improve focus with guided breathing techniques.</p>
+          </div>
+          <div class="card-footer">
+            <button class="breathing-btn"><i class="fas fa-play"></i> Start Session</button>
+          </div>
         </div>
-        <div class="card-content">
-          <h2>Habit Tracker</h2>
-          <p>Build consistency and track your daily habits with visual progress indicators.</p>
-        </div>
-      </div>
-    </a>
+      </a>
 
-    <!-- Breathing Exercise Card -->
-    <a href="breath.html" class="dashboard-card-link">
-      <div class="dashboard-card breathing-card">
-        <div class="card-header">
-          <div class="card-icon breathing-icon"><i class="fas fa-leaf"></i></div>
+      <!-- Challenge Card -->
+      <a href="challenge.html" class="dashboard-card-link">
+        <div class="dashboard-card challenge-card">
+          <div class="card-header">
+            <div class="card-icon"><i class="fas fa-trophy"></i></div>
+            <div class="difficulty-badge">Medium</div>
+          </div>
+          <div class="card-content">
+            <h2>Daily Challenge</h2>
+            <p>Push your limits with personalized challenges and track your progress.</p>
+          </div>
         </div>
-        <div class="card-content">
-          <h2>Breathing Exercise</h2>
-          <p>Reduce stress and improve focus with guided breathing techniques.</p>
-        </div>
-        <div class="card-footer">
-          <button class="breathing-btn"><i class="fas fa-play"></i> Start Session</button>
-        </div>
-      </div>
-    </a>
-
-    <!-- Challenge Card -->
-    <a href="challenge.html" class="dashboard-card-link">
-      <div class="dashboard-card challenge-card">
-        <div class="card-header">
-          <div class="card-icon"><i class="fas fa-trophy"></i></div>
-          <div class="difficulty-badge">Medium</div>
-        </div>
-        <div class="card-content">
-          <h2>Daily Challenge</h2>
-          <p>Push your limits with personalized challenges and track your progress.</p>
-        </div>
-      </div>
-    </a>
-  </div>
-
+      </a>
+    </div>
 
     <!-- Footer -->
     <footer class="dashboard-footer">
@@ -128,8 +124,81 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
   <script>
-    // Add some interactive animations
-    document.addEventListener('DOMContentLoaded', function() {
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDoWm21fIjIMM7jSI9ijA2YjvBNKsZacl8",
+      authDomain: "focusfuel-c4eec.firebaseapp.com",
+      projectId: "focusfuel-c4eec",
+      storageBucket: "focusfuel-c4eec.appspot.com",
+      messagingSenderId: "325140276155",
+      appId: "1:325140276155:web:9f542aece9ac6e41685a9e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(async user => {
+      const isGuest = localStorage.getItem("isGuest") === "true";
+
+      if (!user && !isGuest) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      if (isGuest) {
+        document.getElementById("user-email").textContent = "Guest User";
+        console.log("Accessing as Guest");
+
+        const notice = document.createElement("p");
+        notice.textContent = "⚠ You are in Guest Mode. Progress won't be saved.";
+        notice.style.color = "orange";
+        notice.style.fontWeight = "bold";
+        notice.style.marginTop = "10px";
+        document.querySelector(".user-info").appendChild(notice);
+        return;
+      }
+
+      // Logged-in user
+      document.getElementById("user-email").textContent = user.email;
+      console.log("Logged in as:", user.email);
+
+      const userRef = db.collection("users").doc(user.uid);
+      const userDoc = await userRef.get();
+
+      if (userDoc.exists) {
+        const data = userDoc.data();
+        const pomoData = data.pomodoro || {};
+        const sessionsToday = pomoData.todayCount || 0;
+        const streak = pomoData.streak || 0;
+        const maxDailySessions = 5;
+
+        const streakElement = document.querySelector(".header-stats .stat-item:nth-child(3) .stat-number");
+        if (streakElement) {
+          streakElement.textContent = streak;
+        }
+
+        const progressBar = document.querySelector(".progress-bar");
+        const progressText = document.querySelector(".progress-text");
+        const percent = Math.min((sessionsToday / maxDailySessions) * 100, 100);
+
+        if (progressBar && progressText) {
+          progressBar.style.width = `${percent}%`;
+          progressText.textContent = `${sessionsToday}/${maxDailySessions} sessions today`;
+        }
+
+        console.log("Pomodoro Stats:", { sessionsToday, streak });
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem("isGuest");
+      auth.signOut().then(() => {
+        window.location.href = "login.html";
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
       const cards = document.querySelectorAll('.dashboard-card');
       cards.forEach((card, index) => {
         card.style.animationDelay = `${index * 0.1}s`;
@@ -153,99 +222,7 @@
         shape.style.animationDuration = `${duration}s`;
         shape.style.animationDelay = `${delay}s`;
       });
-
-      //updateProgressBar();
     });
-
-    function updateProgressBar() {
-      const progressBar = document.querySelector('.progress-bar');
-      const progressText = document.querySelector('.progress-text');
-      
-      if (progressBar && progressText) {
-        const completed = 3;
-        const total = 5;
-        const percentage = (completed / total) * 100;
-        
-        progressBar.style.width = `${percentage}%`;
-        progressText.textContent = `${completed}/${total} sessions today`;
-      }
-    }
-
-    function completeSession() {
-      const progressBar = document.querySelector('.progress-bar');
-      const progressText = document.querySelector('.progress-text');
-      
-      if (progressBar && progressText) {
-        const currentWidth = parseInt(progressBar.style.width) || 0;
-        const newWidth = Math.min(currentWidth + 20, 100);
-        const completed = Math.floor(newWidth / 20);
-        
-        progressBar.style.width = `${newWidth}%`;
-        progressText.textContent = `${completed}/5 sessions today`;
-      }
-    }
-
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDoWm21fIjIMM7jSI9ijA2YjvBNKsZacl8",
-      authDomain: "focusfuel-c4eec.firebaseapp.com",
-      projectId: "focusfuel-c4eec",
-      storageBucket: "focusfuel-c4eec.appspot.com",
-      messagingSenderId: "325140276155",
-      appId: "1:325140276155:web:9f542aece9ac6e41685a9e"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    auth.onAuthStateChanged(async user => {
-      if (!user) {
-        window.location.href = "login.html";
-      } else {
-        document.getElementById("user-email").textContent = user.email; // 👈 add this
-        console.log("Logged in as:", user.email);
-
-        const userRef = db.collection("users").doc(user.uid);
-        const userDoc = await userRef.get();
-
-        if (userDoc.exists) {
-          const data = userDoc.data();
-          const pomoData = data.pomodoro || {};
-          const sessionsToday = pomoData.todayCount || 0;
-          const streak = pomoData.streak || 0;
-          const maxDailySessions = 5;
-
-          // 🔁 Update streak in header
-          const streakElement = document.querySelector(".header-stats .stat-item:nth-child(3) .stat-number");
-          if (streakElement) {
-            streakElement.textContent = streak;
-          }
-
-          // 🔁 Update Pomodoro card progress
-          const progressBar = document.querySelector(".progress-bar");
-          const progressText = document.querySelector(".progress-text");
-          const percent = Math.min((sessionsToday / maxDailySessions) * 100, 100);
-
-          if (progressBar && progressText) {
-            progressBar.style.width = `${percent}%`;
-            progressText.textContent = `${sessionsToday}/${maxDailySessions} sessions today`;
-          }
-
-          // 🔁 Optional: Log for debugging
-          console.log("Pomodoro Stats:", { sessionsToday, streak });
-        }
-      }
-    });
-
-
-
-    function logout() {
-      auth.signOut().then(() => {
-        window.location.href = "login.html";
-      });
-    }
   </script>
-
 </body>
 </html>

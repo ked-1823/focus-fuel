@@ -121,3 +121,10 @@ background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #1e40af 100%);
   font-size: 0.95rem;
   opacity: 0.9;
 }
+.guest-btn {
+  background-color: #ddd;
+  color: #333;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
