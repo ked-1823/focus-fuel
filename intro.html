@@ -60,18 +60,16 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
   <script>
-    // ✅ Your Firebase config here (replace with your actual values)
+    // ✅ Your Firebase config
     const firebaseConfig = {
-  apiKey: "AIzaSyDoWm21fIjIMM7jSI9ijA2YjvBNKsZacl8",
-  authDomain: "focusfuel-c4eec.firebaseapp.com",
-  projectId: "focusfuel-c4eec",
-  storageBucket: "focusfuel-c4eec.firebasestorage.app",
-  messagingSenderId: "325140276155",
-  appId: "1:325140276155:web:9f542aece9ac6e41685a9e",
-  measurementId: "G-BQ0441X089"
-};
-
-    // ✅ Initialize Firebase
+      apiKey: "AIzaSyDoWm21fIjIMM7jSI9ijA2YjvBNKsZacl8",
+      authDomain: "focusfuel-c4eec.firebaseapp.com",
+      projectId: "focusfuel-c4eec",
+      storageBucket: "focusfuel-c4eec.appspot.com",
+      messagingSenderId: "325140276155",
+      appId: "1:325140276155:web:9f542aece9ac6e41685a9e",
+      measurementId: "G-BQ0441X089"
+    };
     firebase.initializeApp(firebaseConfig);
   </script>
 </head>
@@ -103,27 +101,27 @@
 
 <script>
   const introSeen = localStorage.getItem("focusFuelIntroDone");
+  const introContainer = document.getElementById('intro');
   const slides = document.querySelectorAll('.slide');
   const nextBtn = document.getElementById('nextBtn');
-  const introContainer = document.getElementById('intro');
   let current = 0;
 
-  // Firebase auth state check
+  // Firebase auth state
   firebase.auth().onAuthStateChanged(user => {
     if (introSeen === "true") {
-      // ✅ Intro seen: skip to appropriate page
+      // ✅ Skip intro, go based on login status
       if (user) {
-        window.location.href = "index.html";
+        window.location.href = "index.html"; // dashboard
       } else {
         window.location.href = "login.html";
       }
     } else {
-      // ✅ First time user: show intro
+      // ✅ Show intro
       introContainer.style.display = "block";
     }
   });
 
-  // Next button logic
+  // Intro slides logic
   nextBtn.addEventListener('click', () => {
     slides[current].classList.remove('active');
     current++;
@@ -134,10 +132,10 @@
       // ✅ Mark intro as seen
       localStorage.setItem("focusFuelIntroDone", "true");
 
-      // ✅ Redirect based on Firebase login state
+      // ✅ Redirect based on Firebase auth
       const user = firebase.auth().currentUser;
       if (user) {
-        window.location.href = "index.html";
+        window.location.href = "index.html"; // dashboard
       } else {
         window.location.href = "login.html";
       }
