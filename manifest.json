@@ -6,21 +6,22 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
+  "description": "A productivity dashboard for focus, breathing, and habit tracking.",
   "orientation": "portrait",
-  "description": "Productivity dashboard to track focus, habits, and challenges.",
   "launch_handler": {
     "client_mode": "auto"
   },
   "icons": [
     {
-      "src": "https://via.placeholder.com/192",
+      "src": "icon192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon.png",
+      "src": "icon512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "icon/png",
+      "purpose": "any maskable"
     }
   ]
 }
