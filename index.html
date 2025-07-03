@@ -31,12 +31,25 @@
             <p class="tagline">Elevate your focus, achieve your goals</p>
           </div>
         </div>
-        <div class="user-info">
-          Logged in as: <span id="user-email"></span>
-          <button onclick="logout()" class="logout-btn">Logout</button>
-        </div>
+       
       </div>
     </header>
+    <!-- ✅ Hamburger Navbar START -->
+    <nav class="navbar">
+      <div class="hamburger" id="hamburger">&#9776;</div>
+      <div class="nav-menu" id="nav-menu">
+        <ul>
+          <li class="user-info">
+            <span>Logged in as:</span><br />
+            <span id="user-email"></span><br />
+            <button onclick="logout()" class="logout-btn">Logout</button>
+          </li>
+          <!-- Add more menu items below -->
+        </ul>
+      </div>
+    </nav>
+
+
 
     <!-- Main Dashboard Grid -->
     <div class="dashboard-grid">
@@ -114,7 +127,7 @@
 
     <!-- Footer -->
     <footer class="dashboard-footer">
-      <p>&copy; 2025 Productivity Hub. Designed for peak performance.</p>
+      <p>&copy; Focus Fuel. Track yourself.</p>
     </footer>
   </div>
 
@@ -150,14 +163,20 @@
         document.getElementById("user-email").textContent = "Guest User";
         console.log("Accessing as Guest");
 
-        const notice = document.createElement("p");
-        notice.textContent = "⚠ You are in Guest Mode. Progress won't be saved.";
-        notice.style.color = "orange";
-        notice.style.fontWeight = "bold";
-        notice.style.marginTop = "10px";
-        document.querySelector(".user-info").appendChild(notice);
+        const userInfo = document.querySelector(".user-info");
+
+        if (userInfo) {
+          const notice = document.createElement("p");
+          notice.textContent = "⚠ You are in Guest Mode. Progress won't be saved.";
+          notice.style.color = "orange";
+          notice.style.fontWeight = "bold";
+          notice.style.marginTop = "10px";
+          userInfo.appendChild(notice);
+        }
+
         return;
       }
+
 
       // Logged-in user
       document.getElementById("user-email").textContent = user.email;
@@ -223,6 +242,21 @@
         shape.style.animationDelay = `${delay}s`;
       });
     });
+    
   </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Existing animations...
+
+      // Add this: navbar toggle functionality
+      const hamburger = document.getElementById('hamburger');
+      const navMenu = document.getElementById('nav-menu');
+
+      hamburger.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+      });
+    });
+  </script>
+
 </body>
 </html>
