@@ -12,6 +12,41 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
+  <style>
+    /* ===== INTRO SECTION STYLES ===== */
+    .intro-container {
+      text-align: center;
+      padding: 20px;
+      display: none;
+      max-width: 90%;
+      animation: fade 0.5s ease-in-out;
+    }
+
+    .slide {
+      display: none;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    #nextIntroBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #00c3ff;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDoWm21fIjIMM7jSI9ijA2YjvBNKsZacl8",
@@ -35,6 +70,20 @@
       }, { merge: true });
     }
 
+    // ✅✅ INTRO SECTION SCRIPT
+    const introSeen = localStorage.getItem("smartifyIntroSeen");
+    let currentSlide = 0;
+
+    function showIntro() {
+      document.getElementById("introBox").style.display = "block";
+      document.querySelector(".auth-box").style.display = "none";
+    }
+
+    function showAuthBox() {
+      document.getElementById("introBox").style.display = "none";
+      document.querySelector(".auth-box").style.display = "block";
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       const loader = document.createElement('div');
       loader.id = 'loader';
@@ -48,168 +97,217 @@
         const isGuest = localStorage.getItem("isGuest") === "true";
 
         if (user) {
-          await user.reload(); // Refresh to get latest emailVerified value
+          await user.reload();
+
           if (user.emailVerified) {
-            if (verifiedParam === "1") {
-              const msgBox = document.getElementById("error-msg");
-              msgBox.textContent = "✅ Email verified successfully! Logging you in...";
-              msgBox.style.color = "green";
-              await storeUserData(user);
-              setTimeout(() => {
-                window.location.href = "index.html";
-              }, 2000);
-            } else {
-              window.location.href = "index.html";
-            }
+            // ✅ User is logged in and email verified → skip intro and go to dashboard
+            window.location.href = "index.html";
           } else {
-            await auth.signOut(); // prevent access if not verified
+            // ⚠ Email not verified → sign out
+            await auth.signOut();
           }
+
         } else if (isGuest) {
+          // ✅ Guest user → go to dashboard directly
           window.location.href = "index.html";
+
         } else {
+          // 🧑‍💻 User is signed out (not logged in)
           document.getElementById('loader').style.display = 'none';
+
+          // ✅ Show intro ONLY if not seen before
+          if (introSeen === "true") {
+            showAuthBox(); // Show login/register UI
+          } else {
+            showIntro();   // Show intro slides
+          }
         }
       });
     });
+
   </script>
 </head>
 <body>
-  <div class="auth-box">
-    <h2 id="form-title">Login</h2>
-    <div class="error-message" id="error-msg" style="color: red;"></div>
 
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <p id="forgot-password" class="link-text" style="cursor: pointer;">Forgot Password?</p>
-
-    <button id="auth-btn">Login</button>
-    <hr style="margin: 24px 0; opacity: 0.3;">
-    <button id="google-btn" class="google-btn">Continue with Google</button>
-    <button id="guest-btn" class="guest-btn">Continue as Guest</button>
-
-    <p class="toggle-mode" id="toggle-link" style="cursor: pointer;">Don't have an account? Register</p>
+<!-- ✅✅ INTRO SECTION (Will show only once) -->
+<div class="intro-container" id="introBox">
+  <div class="slide active">
+    <h1>Welcome to Smartify</h1>
+    <p>Manage your productivity with clarity and focus.</p>
   </div>
+  <div class="slide">
+    <h1>Smart Planning</h1>
+    <p>Create, track, and smash your goals efficiently.</p>
+  </div>
+  <div class="slide">
+    <h1>Deep Focus Sessions</h1>
+    <p>Pomodoro and ambient tools to help you focus deeply.</p>
+  </div>
+  <div class="slide">
+    <h1>Growth Tracking</h1>
+    <p>Build habits and visualize your progress every day.</p>
+  </div>
+  <button id="nextIntroBtn">Next</button>
+</div>
 
-  <script>
-    const authBtn = document.getElementById("auth-btn");
-    const toggleLink = document.getElementById("toggle-link");
-    const formTitle = document.getElementById("form-title");
-    const errorMsg = document.getElementById("error-msg");
+<!-- ✅✅ LOGIN / REGISTER UI (unchanged by me) -->
+<div class="auth-box">
+  <h2 id="form-title">Login</h2>
+  <div class="error-message" id="error-msg" style="color: red;"></div>
 
-    let isLogin = true;
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Password" required />
+  <p id="forgot-password" class="link-text" style="cursor: pointer;">Forgot Password?</p>
 
-    const blockedDomains = [
-      "tempmail.com", "10minutemail.com", "mailinator.com",
-      "yopmail.com", "guerrillamail.com"
-    ];
+  <button id="auth-btn">Login</button>
+  <hr style="margin: 24px 0; opacity: 0.3;">
+  <button id="google-btn" class="google-btn">Continue with Google</button>
+  <button id="guest-btn" class="guest-btn">Continue as Guest</button>
 
-    toggleLink.addEventListener("click", () => {
-      isLogin = !isLogin;
-      formTitle.textContent = isLogin ? "Login" : "Register";
-      authBtn.textContent = isLogin ? "Login" : "Register";
-      toggleLink.textContent = isLogin
-        ? "Don't have an account? Register"
-        : "Already have an account? Login";
-      errorMsg.textContent = "";
-      errorMsg.style.color = "red";
-    });
+  <p class="toggle-mode" id="toggle-link" style="cursor: pointer;">Don't have an account? Register</p>
+</div>
 
-    authBtn.addEventListener("click", async () => {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+<!-- ✅✅ YOUR EXISTING LOGIN LOGIC BELOW (unchanged) -->
+<script>
+  const authBtn = document.getElementById("auth-btn");
+  const toggleLink = document.getElementById("toggle-link");
+  const formTitle = document.getElementById("form-title");
+  const errorMsg = document.getElementById("error-msg");
 
-      if (!email || !password) {
-        errorMsg.textContent = "Please enter both email and password.";
-        return;
-      }
+  let isLogin = true;
 
-      const domain = email.split('@')[1];
-      if (blockedDomains.includes(domain)) {
-        errorMsg.textContent = "Temporary or fake email addresses are not allowed.";
-        return;
-      }
+  const blockedDomains = [
+    "tempmail.com", "10minutemail.com", "mailinator.com",
+    "yopmail.com", "guerrillamail.com"
+  ];
 
-      try {
-        let userCredential;
+  toggleLink.addEventListener("click", () => {
+    isLogin = !isLogin;
+    formTitle.textContent = isLogin ? "Login" : "Register";
+    authBtn.textContent = isLogin ? "Login" : "Register";
+    toggleLink.textContent = isLogin
+      ? "Don't have an account? Register"
+      : "Already have an account? Login";
+    errorMsg.textContent = "";
+    errorMsg.style.color = "red";
+  });
 
-        if (isLogin) {
-          userCredential = await auth.signInWithEmailAndPassword(email, password);
-          const user = userCredential.user;
+  authBtn.addEventListener("click", async () => {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-          await user.reload();
+    if (!email || !password) {
+      errorMsg.textContent = "Please enter both email and password.";
+      return;
+    }
 
-          if (!user.emailVerified) {
-            await auth.signOut();
-            errorMsg.innerHTML = `
-              ⚠ Please verify your email before logging in.<br>
-              <span style="text-decoration:underline; cursor:pointer; color:blue;" id="resend-link">Resend Verification Email</span>
-            `;
-            errorMsg.style.color = "orange";
+    const domain = email.split('@')[1];
+    if (blockedDomains.includes(domain)) {
+      errorMsg.textContent = "Temporary or fake email addresses are not allowed.";
+      return;
+    }
 
-            document.getElementById("resend-link").addEventListener("click", async () => {
-              await user.sendEmailVerification();
-              errorMsg.innerHTML = "✅ Verification email resent! Check your inbox.";
-              errorMsg.style.color = "green";
-            });
-            return;
-          }
+    try {
+      let userCredential;
 
-          await storeUserData(user);
-          window.location.href = "index.html";
+      if (isLogin) {
+        userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
 
-        } else {
-          userCredential = await auth.createUserWithEmailAndPassword(email, password);
-          await userCredential.user.sendEmailVerification();
+        await user.reload();
+
+        if (!user.emailVerified) {
           await auth.signOut();
-
           errorMsg.innerHTML = `
-            ✅ Verification email sent.<br>Please verify and then 
-            <a href="login.html?verified=1" style="color: blue;">click here to login</a>.
+            ⚠ Please verify your email before logging in.<br>
+            <span style="text-decoration:underline; cursor:pointer; color:blue;" id="resend-link">Resend Verification Email</span>
           `;
-          errorMsg.style.color = "green";
+          errorMsg.style.color = "orange";
+
+          document.getElementById("resend-link").addEventListener("click", async () => {
+            await user.sendEmailVerification();
+            errorMsg.innerHTML = "✅ Verification email resent! Check your inbox.";
+            errorMsg.style.color = "green";
+          });
+          return;
         }
 
-        document.getElementById("password").value = "";
-
-      } catch (error) {
-        errorMsg.textContent = error.message;
-        errorMsg.style.color = "red";
-        document.getElementById("password").value = "";
-      }
-    });
-
-    document.getElementById("google-btn").addEventListener("click", async () => {
-      try {
-        const result = await auth.signInWithPopup(provider);
-        await storeUserData(result.user);
+        await storeUserData(user);
         window.location.href = "index.html";
-      } catch (error) {
-        errorMsg.textContent = error.message;
-        errorMsg.style.color = "red";
-      }
-    });
 
-    document.getElementById("guest-btn").addEventListener("click", () => {
-      localStorage.setItem("isGuest", "true");
-      window.location.href = "index.html";
-    });
+      } else {
+        userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        await userCredential.user.sendEmailVerification();
+        await auth.signOut();
 
-    document.getElementById("forgot-password").addEventListener("click", async () => {
-      const email = document.getElementById("email").value.trim();
-      if (!email) {
-        errorMsg.textContent = "Please enter your email to reset password.";
-        return;
-      }
-
-      try {
-        await auth.sendPasswordResetEmail(email);
-        errorMsg.textContent = "✅ Password reset email sent!";
+        errorMsg.innerHTML = `
+          ✅ Verification email sent.<br>Please verify and then 
+          <a href="login.html?verified=1" style="color: blue;">click here to login</a>.
+        `;
         errorMsg.style.color = "green";
-      } catch (error) {
-        errorMsg.textContent = error.message;
-        errorMsg.style.color = "red";
       }
-    });
-  </script>
+
+      document.getElementById("password").value = "";
+
+    } catch (error) {
+      errorMsg.textContent = error.message;
+      errorMsg.style.color = "red";
+      document.getElementById("password").value = "";
+    }
+  });
+
+  document.getElementById("google-btn").addEventListener("click", async () => {
+    try {
+      const result = await auth.signInWithPopup(provider);
+      await storeUserData(result.user);
+      window.location.href = "index.html";
+    } catch (error) {
+      errorMsg.textContent = error.message;
+      errorMsg.style.color = "red";
+    }
+  });
+
+  document.getElementById("guest-btn").addEventListener("click", () => {
+    localStorage.setItem("isGuest", "true");
+    window.location.href = "index.html";
+  });
+
+  document.getElementById("forgot-password").addEventListener("click", async () => {
+    const email = document.getElementById("email").value.trim();
+    if (!email) {
+      errorMsg.textContent = "Please enter your email to reset password.";
+      return;
+    }
+
+    try {
+      await auth.sendPasswordResetEmail(email);
+      errorMsg.textContent = "✅ Password reset email sent!";
+      errorMsg.style.color = "green";
+    } catch (error) {
+      errorMsg.textContent = error.message;
+      errorMsg.style.color = "red";
+    }
+  });
+
+  // ✅✅ Handle Intro Slide Click
+  document.addEventListener("DOMContentLoaded", () => {
+    const slides = document.querySelectorAll(".slide");
+    const nextBtn = document.getElementById("nextIntroBtn");
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+        slides[currentSlide].classList.remove("active");
+        currentSlide++;
+        if (currentSlide < slides.length) {
+          slides[currentSlide].classList.add("active");
+        } else {
+          localStorage.setItem("smartifyIntroSeen", "true");
+          showAuthBox();
+        }
+      });
+    }
+  });
+</script>
+
 </body>
 </html>
