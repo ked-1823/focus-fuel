@@ -21,6 +21,7 @@
       text-align: center;
       padding: 20px;
       max-width: 90%;
+      display: none; /* Hidden until needed */
     }
 
     .slide {
@@ -59,7 +60,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
   <script>
-    // ✅ Your Firebase config here
+    // ✅ Your Firebase config here (replace with your actual values)
     const firebaseConfig = {
   apiKey: "AIzaSyDoWm21fIjIMM7jSI9ijA2YjvBNKsZacl8",
   authDomain: "focusfuel-c4eec.firebaseapp.com",
@@ -101,27 +102,28 @@
 </div>
 
 <script>
-  // ✅ Check if intro was already seen
   const introSeen = localStorage.getItem("focusFuelIntroDone");
+  const slides = document.querySelectorAll('.slide');
+  const nextBtn = document.getElementById('nextBtn');
+  const introContainer = document.getElementById('intro');
+  let current = 0;
 
+  // Firebase auth state check
   firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      // ✅ If user is logged in, go to dashboard
-      window.location.href = "index.html";
-    } else {
-      if (introSeen === "true") {
-        // ✅ If intro seen and user not logged in, go to login
+    if (introSeen === "true") {
+      // ✅ Intro seen: skip to appropriate page
+      if (user) {
+        window.location.href = "index.html";
+      } else {
         window.location.href = "login.html";
       }
-      // ✅ Else, show intro (stay here)
+    } else {
+      // ✅ First time user: show intro
+      introContainer.style.display = "block";
     }
   });
 
-  // ✅ Intro slider logic
-  const slides = document.querySelectorAll('.slide');
-  const nextBtn = document.getElementById('nextBtn');
-  let current = 0;
-
+  // Next button logic
   nextBtn.addEventListener('click', () => {
     slides[current].classList.remove('active');
     current++;
@@ -132,8 +134,13 @@
       // ✅ Mark intro as seen
       localStorage.setItem("focusFuelIntroDone", "true");
 
-      // ✅ Redirect to login page after intro
-      window.location.href = "login.html";
+      // ✅ Redirect based on Firebase login state
+      const user = firebase.auth().currentUser;
+      if (user) {
+        window.location.href = "index.html";
+      } else {
+        window.location.href = "login.html";
+      }
     }
   });
 </script>
