@@ -10,10 +10,10 @@
   <link rel="stylesheet" href="dashboard.css" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1" rel="stylesheet">
   <meta name="mobile-web-app-capable" content="yes">
-
+  <script defer data-domain="focus-fuel.vercel.app" src="https://plausible.io/js/script.js"></script>
 </head>
 <body>
-  <!-- Animated Background -->
+  <!-- Animated Background  2e6f95-->
   <div class="background-overlay"></div>
   <div class="floating-shapes">
     <div class="shape shape-1"></div>
@@ -30,6 +30,7 @@
         <div class="logo-section">
           <div class="logo-icon">
             <i class="fa-solid fa-leaf"></i>
+      
 
           </div>
           <div class="header-text">
@@ -104,7 +105,7 @@
       <a href="breath.html" class="dashboard-card-link">
         <div class="dashboard-card breathing-card">
           <div class="card-header">
-            <div class="card-icon breathing-icon"><i class="fas fa-leaf"></i></div>
+            <div class="card-icon breathing-icon"><i class="fa-solid fa-wind"></i></div>
           </div>
           <div class="card-content">
             <h2>Breathing Exercise</h2>
@@ -230,15 +231,15 @@
         card.classList.add('fade-in');
       });
 
-      const breathingIcon = document.querySelector('.breathing-icon');
-      if (breathingIcon) {
-        setInterval(() => {
-          breathingIcon.style.transform = 'scale(1.1)';
-          setTimeout(() => {
-            breathingIcon.style.transform = 'scale(1)';
-          }, 1000);
-        }, 2000);
-      }
+      //const breathingIcon = document.querySelector('.breathing-icon');
+     // if (breathingIcon) {
+     //   setInterval(() => {
+     //     breathingIcon.style.transform = 'scale(1.1)';
+      //    setTimeout(() => {
+      //      breathingIcon.style.transform = 'scale(1)';
+      //    }, 1000);
+      //  }, 2000);
+     // } 
 
       const shapes = document.querySelectorAll('.shape');
       shapes.forEach(shape => {
