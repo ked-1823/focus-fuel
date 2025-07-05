@@ -264,6 +264,28 @@
     });
   </script>
     <!-- Other scripts above -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        for (let registration of registrations) {
+          registration.unregister().then(() => {
+            console.log('🧹 Service Worker unregistered');
+          });
+        }
+      });
+
+      // Clear all caches
+      caches.keys().then(function(names) {
+        for (let name of names) {
+          caches.delete(name).then(() => {
+            console.log(`🧹 Cache '${name}' deleted`);
+          });
+        }
+      });
+    }
+  </script>
+
+
 
 
 
