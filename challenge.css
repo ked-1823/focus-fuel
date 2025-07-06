@@ -138,14 +138,14 @@ input[type="text"]::placeholder {
 }
 
 .primary-btn {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    background: #456882;
     color: white;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    
 }
 
 .primary-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+    box-shadow: 0 8px 25px rgb(168, 72, 21, 0.4);
 }
 
 .secondary-btn {

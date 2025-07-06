@@ -37,7 +37,7 @@ body {
   }
 
   .auth-box {
-    transform: scale(0.65);                  /* Shrink for smaller screens */
+    transform: scale(0.95);                  /* Shrink for smaller screens */
     transform-origin: top center;
     padding: 16px;
     max-width: 85%;
@@ -88,6 +88,7 @@ input {
   font-size: 1rem;
   background-color: rgba(255, 255, 255, 0.2);
   color: white;
+  box-sizing: border-box;
 }
 
 input::placeholder {
