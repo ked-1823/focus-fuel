@@ -183,7 +183,8 @@ body {
 .logo-icon {
   width: 60px;
   height: 60px;
-  background: var(--gradient-accent);
+  background: linear-gradient(120deg, #575e94, #3f0476);
+
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -208,7 +209,7 @@ body {
 .header-text h1 {
   font-size: 2.5rem;
   font-weight: 800;
-  background: var(--gradient-accent);
+  background: #d6ccc2;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -658,20 +659,25 @@ body {
 .hamburger,
 .nav-menu {
   position: relative;
-  z-index: 9999; /* ensure it's on top of all layers */
+  top:-10px;
+  z-index: 9999;
+  cursor: pointer;
+ /* ensure it's on top of all layers */
 }
+
 
 .nav-menu {
   display: none;
   background-color: #1a1a1a;
   color: white;
   position: absolute;
-  top: 40px;
+  top: 50px;
   left: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   padding: 10px;
   border-radius: 8px;
   z-index: 9999;
+  border:2px solid whitesmoke;
 }
 
 .nav-menu.active {
@@ -693,7 +699,7 @@ body {
   margin-top: 6px;
   padding: 6px 12px;
   border: none;
-  background: var(--accent-red);
+  background: #421b69;
   color: white;
   border-radius: 6px;
   cursor: pointer;
@@ -701,7 +707,7 @@ body {
 }
 
 .logout-btn:hover {
-  background: #dc2626;
+  background: #eeb5b5;
 }
 
 /* Ensure other layers are below navbar */
@@ -714,22 +720,27 @@ body {
   z-index: 0;
 }
 /* Dropdown Arrow */
-.nav-menu::before {
-  content: "";
+.nav-menu {
+  display: none;
+  background-color: #1a1a1a;
+  color: white;
   position: absolute;
-  top: -10px;
-  left: 20px;
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 10px solid #1a1a1a; /* DARK, matches the menu */
+  top: 50px;
+  left: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 8px;
+  z-index: 9999;
+  border: 3px solid whitesmoke;
+  min-width: 160px;
 }
+
+
 html {
   scroll-behavior: smooth;
 }
 .support-section {
-  background-color: var(--secondary-bg);
+  background-color: #5ba1e6;
   color: var(--text-primary);
   padding: 60px 20px;
   margin-top: 60px;
@@ -764,6 +775,16 @@ html {
 .support-btn:hover {
   opacity: 0.9;
 }
-
+.nav-link{
+  color: #90c3f4;
+  text-decoration: underline;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+#user-email{
+  font-size: 0.85rem;
+  color: var(--text-secondary); 
+  word-break: break-word;
+}
 
 
